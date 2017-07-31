@@ -214,8 +214,13 @@ class AirCargoProblem(Problem):
         executed.
         """
         # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
-        count = 0
-        return count
+        kb = PropKB()
+        kb.tell(decode_state(node.state, self.state_map).pos_sentence())
+        unsatisfied = 0
+        for clause in self.goal:
+            if clause not in kb.clauses:
+                unsatisfied += 1
+        return unsatisfied
 
 
 def air_cargo_p1() -> AirCargoProblem:
