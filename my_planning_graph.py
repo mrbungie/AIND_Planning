@@ -303,6 +303,17 @@ class PlanningGraph():
         :return:
             adds A nodes to the current level in self.a_levels[level]
         """
+        action_nodes = set()
+        for action in self.possible_actions:
+            action_node = PgNode_a(action)
+            if action_nod.prenodes <= self.s_levels[level]:
+                for s_node in self.s_levels[level]:
+                    if s_node in action_nod.prenodes:
+                        action_node.parents.add(s_node)
+                        s_node.children.add(action_node)
+                action_nodes.add(action_node)
+
+        self.a_levels[level] = action_nodes
         # TODO add action A level to the planning graph as described in the Russell-Norvig text
         # 1. determine what actions to add and create those PgNode_a objects
         # 2. connect the nodes to the previous S literal level
@@ -320,6 +331,21 @@ class PlanningGraph():
         :return:
             adds S nodes to the current level in self.s_levels[level]
         """
+        s_nodes = set()
+        for a_node in self.a_levels[level-1]:
+            for effect_s_node in a_node.effnodes:
+                try:
+                    s_node = s_nodes.pop(effect_s_node)
+                except KeyError:
+                    s_node = effect_s_node
+                s_node.parents.add(a_node)
+                a_node.children.add(s_node)
+                s_nodes.add(s_node)
+
+        self.s_levels[level] = s_nodes
+
+
+
         # TODO add literal S level to the planning graph as described in the Russell-Norvig text
         # 1. determine what literals to add
         # 2. connect the nodes
