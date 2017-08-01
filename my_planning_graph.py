@@ -532,6 +532,23 @@ class PlanningGraph():
         :return: int
         """
         level_sum = 0
+        for goal_state in self.problem.goal:
+            found = False
+            for level, s_level in enumerate(self.s_levels):
+                for s_node in s_level:
+                    if not s_node.is_pos:
+                        literal_str = "~%s" % s_node.symbol
+                    else:
+                        literal_str = s_node.symbol
+
+                    literal = expr(literal_str)
+                    if goal_state == literal:
+                        level_sum += level
+                        found = True
+                        break
+                if found:
+                    break
+                
         # TODO implement
         # for each goal in the problem, determine the level cost, then add them together
         return level_sum
